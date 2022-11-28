@@ -2,7 +2,7 @@
 
 # django-rest-backend by Jobsimulator.dev
 
-This is an Django-based Pokémon REST API based on PokeAPI. Your job is to fix 5 issues:
+This is an Django-based Pokémon REST API. Your job is to fix 5 issues:
 
 1. [Update `/pokemon` endpoint to include a Pokémon's type.](https://github.com/developer-job-simulation/django-rest-backend/issues/1)
 1. [Implement Get Pokémon by ID](https://github.com/developer-job-simulation/django-rest-backend/issues/2)
