@@ -26,11 +26,11 @@ You will learn and gain experience with:
 
 ## How to start working
 
+1. Make sure you have python 3.X installed. ([Tutorial](https://realpython.com/lessons/pyenv-install-python/))
 1. Fork this repo and clone it locally.
-1. enter `src` directory and run `npm install` to install dependencies.
-1. run `npm start` to start the development server.
-1. Open src/app.js in your IDE to start exploring the codebase.
-1. Open http://localhost:3000/api-docs to view the Swagger docs. This is where you can find the API specifications.
+1. enter the repo directory and run `pip install -r requirements.txt` to install dependencies.
+1. run `python manage.py runserver` to start the development server.
+1. Browse the `pokemon` directory of the project in your IDE to start exploring the codebase. 
 1. Fix all the issues (hints are provided as TODO comments in the code)
 1. Once all your solutions are complete, create a single Pull Request to this repository
 1. Check if your solutions passes our automated tests.
