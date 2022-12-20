@@ -23,8 +23,12 @@ def pokemon_by_id(request, id):
     """
     Get Pokemon by ID
     """
-    # TODO: Implement Endpoint
-    return HttpResponse(status=501)
+    try:
+        pokemon = Pokemon.objects.get(id=id)
+        serializer = PokemonSerializer(pokemon)
+        return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
+    except Pokemon.DoesNotExist:
+        return JsonResponse({'error': 'Not found'}, status=404)
 
 
 @csrf_exempt
@@ -33,8 +37,12 @@ def pokemon_by_name(request, name):
     """
     Get Pokemon by name
     """
-    # TODO: Implement Endpoint
-    return HttpResponse(status=501)
+    try:
+        pokemon = Pokemon.objects.get(name_english__iexact=name)
+        serializer = PokemonSerializer(pokemon)
+        return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
+    except Pokemon.DoesNotExist:
+        return JsonResponse({'error': 'Not found'}, status=404)
 
 
 @csrf_exempt
@@ -42,8 +50,12 @@ def pokemon_by_type(request, pokemon_type):
     """
     Get Pokemon by type
     """
-    # TODO: Implement Endpoint
-    return HttpResponse(status=501)
+    pokemon = Pokemon.objects.filter(types__type__iexact=pokemon_type)
+    if pokemon:
+        serializer = PokemonSerializer(pokemon, many=True)
+        return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
+    else:
+        return JsonResponse({'error': 'Bad request'}, status=404)
 
 
 @csrf_exempt
@@ -51,5 +63,21 @@ def pokemon_by_hp(request):
     """
     Get Pokemon by HP
     """
-    # TODO: Implement Endpoint
-    return HttpResponse(status=501)
+    pokemon = Pokemon.objects.all()
+    for k, v in request.GET.items():
+        if k == 'lt':
+            pokemon = pokemon.filter(hp__lt=v)
+        elif k == 'lte':
+            pokemon = pokemon.filter(hp__lte=v)
+        elif k == 'gt':
+            pokemon = pokemon.filter(hp__gt=v)
+        elif k == 'gte':
+            pokemon = pokemon.filter(hp__gte=v)
+        else:
+            return JsonResponse({'error': 'Invalid Operator. Must be one of ["gt","gte","lt","lte"]'},
+                                status=404)
+    if pokemon:
+        serializer = PokemonSerializer(pokemon, many=True)
+        return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
+    else:
+        return JsonResponse({'error': 'Not found'}, status=404)
