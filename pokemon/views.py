@@ -55,7 +55,7 @@ def pokemon_by_type(request, pokemon_type):
         serializer = PokemonSerializer(pokemon, many=True)
         return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
     else:
-        return JsonResponse({'error': 'Bad request'}, status=404)
+        return JsonResponse({'error': 'Bad request'}, status=400)
 
 
 @csrf_exempt
