@@ -75,7 +75,7 @@ def pokemon_by_hp(request):
             pokemon = pokemon.filter(hp__gte=v)
         else:
             return JsonResponse({'error': 'Invalid Operator. Must be one of ["gt","gte","lt","lte"]'},
-                                status=404)
+                                status=400)
     if pokemon:
         serializer = PokemonSerializer(pokemon, many=True)
         return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
