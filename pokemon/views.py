@@ -57,7 +57,7 @@ def pokemon_by_type(request, pokemon_type):
     try:
         # check if type exists
         if pokemon_type.lower() not in [t[0].lower() for t in VALID_POKEMON_TYPES]:
-            return JsonResponse({"error": "Bad Request"}, status=400)
+            return JsonResponse({"error": "Bad request"}, status=400)
 
         pokemon = Pokemon.objects.filter(types__type__iexact=pokemon_type)
         serializer = PokemonSerializer(pokemon, many=True)
@@ -83,9 +83,7 @@ def pokemon_by_hp(request):
 
         if not comparators:
             return JsonResponse(
-                {
-                    "error": 'Invalid Operator. Must be one of ["gt", "gte", "lt", "lte"]'
-                },
+                {"error": 'Invalid Operator. Must be one of ["gt","gte","lt","lte"]'},
                 status=400,
             )
 
