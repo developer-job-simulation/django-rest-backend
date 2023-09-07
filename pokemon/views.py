@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
@@ -31,7 +31,7 @@ def pokemon_by_id(request, id):
         pokemon = get_object_or_404(Pokemon, id=id)
         serializer = PokemonSerializer(pokemon)
         return JsonResponse(serializer.data, safe=False)
-    except Pokemon.DoesNotExist:
+    except Http404:
         return JsonResponse({"error": "Not found"}, status=404)
 
 
@@ -45,7 +45,7 @@ def pokemon_by_name(request, name):
         pokemon = get_object_or_404(Pokemon, name_english__iexact=name)
         serializer = PokemonSerializer(pokemon)
         return JsonResponse(serializer.data, safe=False)
-    except Pokemon.DoesNotExist:
+    except Http404:
         return JsonResponse({"error": "Not found"}, status=404)
 
 
@@ -62,7 +62,7 @@ def pokemon_by_type(request, pokemon_type):
         pokemon = Pokemon.objects.filter(types__type__iexact=pokemon_type)
         serializer = PokemonSerializer(pokemon, many=True)
         return JsonResponse(serializer.data, safe=False)
-    except Pokemon.DoesNotExist:
+    except Http404:
         return JsonResponse({"error": "Not found"}, status=404)
 
 
@@ -104,11 +104,11 @@ def pokemon_by_hp(request):
 
         pokemons = Pokemon.objects.filter(filter_query)
         serializer = PokemonSerializer(pokemons, many=True)
-        
+
         if pokemons.exists():
             return JsonResponse(serializer.data, safe=False)
         else:
             return JsonResponse({"error": "Not found"}, status=404)
 
-    except Pokemon.DoesNotExist:
+    except Http404:
         return JsonResponse({"error": "Not found"}, status=404)
