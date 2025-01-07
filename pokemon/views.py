@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.db.models import Q
 import pokemon
-from pokemon.models import Pokemon, VALID_POKEMON_TYPES
+from pokemon.models import Pokemon, VALID_POKEMON_TYPES, PokemonTypes
 from pokemon.serializers import PokemonSerializer
 
 
@@ -40,7 +40,6 @@ def pokemon_by_name(request, name):
             Q(name_japanese__icontains=name) |
             Q(name_chinese__icontains=name) |
             Q(name_french__icontains=name)
-        
     )
     serializer = PokemonSerializer(pokemon, many=True)
     return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
@@ -51,9 +50,10 @@ def pokemon_by_type(request, pokemon_type):
     """
     Get Pokemon by type
     """
-    # TODO: Implement Endpoint
-    return HttpResponse(status=501)
-
+    pokemon_types = PokemonTypes.objects.filter(type=pokemon_type)
+    pokemons = [ pokemon_type.pokemon for pokemon_type in pokemon_types]
+    serializer = PokemonSerializer(pokemons, many=True)
+    return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
 
 @csrf_exempt
 def pokemon_by_hp(request):
