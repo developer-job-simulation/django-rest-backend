@@ -23,8 +23,10 @@ def pokemon_by_id(request, id):
     """
     Get Pokemon by ID
     """
+    pokemon = Pokemon.objects.get(id=id)
+    serializer = PokemonSerializer(pokemon, )
     # TODO: Implement Endpoint
-    return HttpResponse(status=501)
+    return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
 @csrf_exempt
