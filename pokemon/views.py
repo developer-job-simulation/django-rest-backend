@@ -1,7 +1,8 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse 
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.db.models import Q
+from rest_framework.views import status
 from pokemon.models import Pokemon, PokemonTypes
 from pokemon.serializers import PokemonSerializer
 
@@ -22,7 +23,10 @@ def pokemon_by_id(request, id):
     """
     Get Pokemon by ID
     """
-    pokemon = Pokemon.objects.get(id=id)
+    try:
+        pokemon = Pokemon.objects.get(id=id)
+    except:
+        return JsonResponse({"error": "Not found"},status=404)
     serializer = PokemonSerializer(pokemon)
     return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
 
@@ -40,6 +44,8 @@ def pokemon_by_name(request, name):
             Q(name_french__icontains=name)
     )
     serializer = PokemonSerializer(pokemon, many=True)
+    if serializer == []:
+        return JsonResponse({"error": "Not found"},status=404)
     return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
@@ -51,7 +57,7 @@ def pokemon_by_type(request, pokemon_type):
     pokemon_types = PokemonTypes.objects.filter(type__icontains=pokemon_type)
     pokemons = [ pokemon_type.pokemon for pokemon_type in pokemon_types]
     if pokemons == []:
-        return JsonResponse({"error":"Bad request"})
+        return JsonResponse({"error":"Bad request"},status=404)
     serializer = PokemonSerializer(pokemons, many=True)
     return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
 
@@ -67,7 +73,7 @@ def pokemon_by_hp(request):
 
     for key in params:
         if key not in ["gt","gte","lt","lte"]:
-            return JsonResponse({"error":'Invalid Operator. Must be one of ["gt","gte","lt","lte"]'})
+            return JsonResponse({"error":'Invalid Operator. Must be one of ["gt","gte","lt","lte"]'},status=404)
 
     if hp_gt:
         query &= Q(hp__gt = hp_gt)
