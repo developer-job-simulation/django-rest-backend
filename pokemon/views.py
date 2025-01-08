@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from django.db.models import Q
 import pokemon
 from pokemon.models import Pokemon, VALID_POKEMON_TYPES, PokemonTypes
+from pokemon.models import Pokemon, PokemonTypes
 from pokemon.serializers import PokemonSerializer
 
 
@@ -51,7 +52,10 @@ def pokemon_by_type(request, pokemon_type):
     Get Pokemon by type
     """
     pokemon_types = PokemonTypes.objects.filter(type=pokemon_type)
+    pokemon_types = PokemonTypes.objects.filter(type__icontains=pokemon_type)
     pokemons = [ pokemon_type.pokemon for pokemon_type in pokemon_types]
+    if pokemons == []:
+        return JsonResponse({"error":"Bad request"})
     serializer = PokemonSerializer(pokemons, many=True)
     return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
 
