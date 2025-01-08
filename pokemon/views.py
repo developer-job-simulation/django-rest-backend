@@ -2,8 +2,6 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.db.models import Q
-import pokemon
-from pokemon.models import Pokemon, VALID_POKEMON_TYPES, PokemonTypes
 from pokemon.models import Pokemon, PokemonTypes
 from pokemon.serializers import PokemonSerializer
 
@@ -66,3 +64,18 @@ def pokemon_by_hp(request):
     """
     # TODO: Implement Endpoint
     return HttpResponse(status=501)
+    params = request.GET
+    hp_lt = request.GET.get("lt")
+    hp_gt = request.GET.get("gt")
+    query = Q()
+    if hp_gt:
+        query &= Q(hp__gt = hp_gt)
+
+    if hp_lt:
+        query &= Q(hp__lt = hp_lt)
+    if hp_gt and hp_lt:
+        if hp_gt > hp_lt:
+            return JsonResponse({"error":"Not found"},status=404)
+    pokemons = Pokemon.objects.filter(query)
+    serializer = PokemonSerializer(pokemons,many=True)
+    return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False})
